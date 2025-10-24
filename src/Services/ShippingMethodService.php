@@ -72,18 +72,18 @@ class ShippingMethodService
     {
         $drivers = ShippingMethodDriverFactory::getOptions();
 
-        if (! in_array(strtolower($data->driver), $drivers))
+        if (! in_array(strtolower($data->driver), array_keys($drivers)))
             throw new \InvalidArgumentException('Invalid driver');
 
-        if (! in_array($data->type, ShippingMethodTypeEnum::toArray()))
+        if (! in_array($data->type, array_keys(ShippingMethodTypeEnum::toArray())))
             throw new \InvalidArgumentException('Invalid type');
 
         $driver = ShippingMethodDriverFactory::getDriver($data->driver);
 
-        if(! in_array($data->channel,$driver->channels()))
+        if(! in_array($data->channel,array_keys($driver->channels())))
             throw new \InvalidArgumentException('Invalid channel');
 
-        if(! in_array($data->service,$driver->services()))
+        if(! in_array($data->service,array_keys($driver->services())))
             throw new \InvalidArgumentException('Invalid service');
 
         $driver->metaValidation($data->meta);
@@ -109,18 +109,18 @@ class ShippingMethodService
 
         $drivers = ShippingMethodDriverFactory::getOptions();
 
-        if (! in_array(strtolower($data->driver), $drivers))
+        if (! in_array(strtolower($data->driver), array_keys($drivers)))
             throw new \InvalidArgumentException('Invalid driver');
 
-        if (! in_array($data->type, ShippingMethodTypeEnum::toArray()))
+        if (! in_array($data->type, array_keys(ShippingMethodTypeEnum::toArray())))
             throw new \InvalidArgumentException('Invalid type');
 
         $driver = ShippingMethodDriverFactory::getDriver($data->driver);
 
-        if(! in_array($data->channel,$driver->channels()))
+        if(! in_array($data->channel, array_keys($driver->channels())))
             throw new \InvalidArgumentException('Invalid channel');
 
-        if(! in_array($data->service,$driver->services()))
+        if(! in_array($data->service, array_keys($driver->services())))
             throw new \InvalidArgumentException('Invalid service');
 
         $driver->metaValidation($data->meta);
