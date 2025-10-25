@@ -295,7 +295,7 @@ class ShippingService
         }
 
         $record->update([
-            'status' => ShippingStatusEnum::Requested->value,
+            'status' => ShippingStatusEnum::Delivered->value,
         ]);
     }
 
@@ -312,7 +312,7 @@ class ShippingService
         }
 
         $record->update([
-            'status' => ShippingStatusEnum::Requested->value,
+            'status' => ShippingStatusEnum::Canceled->value,
         ]);
     }
 
@@ -346,7 +346,7 @@ class ShippingService
         }
 
         $record->update([
-            'status' => ShippingStatusEnum::Returned->value,
+            'status' => ShippingStatusEnum::Failed->value,
         ]);
     }
 

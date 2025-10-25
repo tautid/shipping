@@ -18,7 +18,7 @@ class ShippingMethodService
 {
     use FilterServiceTrait;
 
-    public function getAllPaymentMethods(): DataCollection
+    public function getAllShippingMethods(): DataCollection
     {
         return new DataCollection(
             ShippingMethodData::class,
@@ -26,7 +26,7 @@ class ShippingMethodService
         );
     }
 
-    public function getPaginatePaymentMethods(FilterPaginationData $data): PaginatedDataCollection
+    public function getPaginateShippingMethods(FilterPaginationData $data): PaginatedDataCollection
     {
         $query = $this->filteredQuery(ShippingMethod::class, $data);
 
@@ -68,7 +68,7 @@ class ShippingMethodService
         return ShippingMethodData::from($record);
     }
 
-    public function createPaymentMethod(CreateShippingMethodData $data): ShippingMethodData
+    public function createShippingMethod(CreateShippingMethodData $data): ShippingMethodData
     {
         $drivers = ShippingMethodDriverFactory::getOptions();
 
@@ -100,7 +100,7 @@ class ShippingMethodService
         return ShippingMethodData::from($record);
     }
 
-    public function updatePaymentMethod(UpdateShippingMethodData $data): ShippingMethodData
+    public function updateShippingMethod(UpdateShippingMethodData $data): ShippingMethodData
     {
         $record = ShippingMethod::find($data->id);
 
