@@ -2,10 +2,10 @@
 
 namespace TautId\Shipping\Enums;
 
-enum ShippingMethodTypeEnum: string
+enum ShippingTypeEnum: string
 {
-    case Sandbox = 'sandbox';
-    case Production = 'production';
+    case Pickup = 'pickup';
+    case Dropoff = 'dropoff';
 
     public static function toArray(): array
     {

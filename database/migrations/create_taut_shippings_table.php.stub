@@ -33,7 +33,9 @@ return new class extends Migration
             $table->string('method_channel')->nullable();
             $table->string('method_service')->nullable();
             $table->string('status');
+            $table->string('type')->nullable();
             $table->boolean('is_cod')->default(false);
+            $table->boolean('is_use_insurance')->default(false);
             $table->string('awb')->nullable();
             $table->text('note')->nullable();
 
@@ -69,8 +71,11 @@ return new class extends Migration
             $table->double('package_weight');
             $table->json('package_dimenstion')->nullable();
             $table->double('shipping_cost')->default(0);
+            $table->double('insurance_cost')->default(0);
+            $table->double('total_cost')->default(0);
 
             $table->timestamp('date');
+            $table->timestamp('pickup_time')->nullable();
             $table->timestamp('delivered_at')->nullable();
             $table->timestamp('last_check_status_at')->nullable();
 

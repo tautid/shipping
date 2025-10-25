@@ -13,4 +13,9 @@ enum ShippingStatusEnum: string
     case Canceled = 'canceled';
     case Failed = 'failed';
     case Lost = 'lost';
+
+    public static function toArray(): array
+    {
+        return collect(self::cases())->pluck('name', 'value')->toArray();
+    }
 }

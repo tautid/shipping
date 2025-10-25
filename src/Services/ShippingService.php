@@ -5,12 +5,14 @@ namespace TautId\Shipping\Services;
 use TautId\Shipping\Models\Shipping;
 use Illuminate\Http\RedirectResponse;
 use Spatie\LaravelData\DataCollection;
+use TautId\Shipping\Enums\ShippingTypeEnum;
 use TautId\Shipping\Enums\ShippingStatusEnum;
 use TautId\Shipping\Traits\FilterServiceTrait;
 use Spatie\LaravelData\PaginatedDataCollection;
 use TautId\Shipping\Data\Shipping\ShippingData;
 use Illuminate\Database\RecordNotFoundException;
 use TautId\Shipping\Data\Shipping\CreateShippingData;
+use TautId\Shipping\Data\Shipping\ShippingRequestData;
 use TautId\Shipping\Data\Utility\FilterPaginationData;
 use TautId\Shipping\Data\Shipping\ShippingInformationData;
 use TautId\Shipping\Factories\ShippingMethodDriverFactory;
@@ -24,6 +26,7 @@ class ShippingService
     private static ?string $shipping_id;
     private static ?string $awb;
     private static ?float $shipping_cost;
+    private static ?float $insurance_cost;
     private static ?string $driver_order_id;
     private static ?string $status;
 
@@ -231,9 +234,12 @@ class ShippingService
         return ShippingData::from($record);
     }
 
-    public function changeShippingToRequested(string $shipping_id): void
+    public function changeShippingToRequested(ShippingRequestData $data): void
     {
-        $record = Shipping::find($shipping_id);
+        if(!in_array($data->type,array_keys(ShippingTypeEnum::toArray())))
+            throw new \InvalidArgumentException('Type is invalid from ShippingTypeEnum');
+
+        $record = Shipping::find($data->shipping_id);
 
         if (empty($record)) {
             throw new RecordNotFoundException('Shipping not found');
@@ -243,11 +249,19 @@ class ShippingService
             throw new \InvalidArgumentException('This current payment status is not draft');
         }
 
+        $create_shipping_data = ShippingData::from($record);
+        $create_shipping_data->pickup_time = $data->pickup_time;
+        $create_shipping_data->type = $data->type;
+        $create_shipping_data->is_use_insurance = $data->is_use_insurance ?? false;
+
         ShippingMethodDriverFactory::getDriver($record->method_driver)
-                            ->createShipping(ShippingData::from($record));
+                            ->createShipping($create_shipping_data);
 
         $record->update([
             'status' => ShippingStatusEnum::Requested->value,
+            'type' => $data->type,
+            'pickup_time' => $data->pickup_time,
+            'is_use_insurance' => $data->is_use_insurance ?? false
         ]);
     }
 
@@ -396,6 +410,13 @@ class ShippingService
         return $this;
     }
 
+    public function setInsuranceCost(float $cost): self
+    {
+        self::$insurance_cost = $cost;
+
+        return $this;
+    }
+
     public function setDriverOrderId(string $driver_order_id): self
     {
         self::$driver_order_id = $driver_order_id;
@@ -420,6 +441,8 @@ class ShippingService
         $payload = [
             'awb' => self::$awb ?? null,
             'shipping_cost' => self::$shipping_cost ?? null,
+            'insurance_cost' => self::$insurance_cost ?? null,
+            'total_cost' => (empty(self::$shipping_cost)) ? (self::$shipping_cost + self::$insurance_cost ?? 0) : null,
             'driver_order_id' => self::$driver_order_id ?? null,
             'status' => self::$status ?? null
         ];

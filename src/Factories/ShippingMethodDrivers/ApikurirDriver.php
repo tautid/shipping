@@ -5,11 +5,12 @@ namespace TautId\Shipping\Factories\ShippingMethodDrivers;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\DataCollection;
+use TautId\Shipping\Helpers\ImageHelper;
 use TautId\Shipping\Models\ShippingMethod;
+use TautId\Shipping\Enums\ShippingTypeEnum;
 use TautId\Shipping\Enums\ShippingStatusEnum;
 use TautId\Shipping\Services\ShippingService;
 use TautId\Shipping\Data\Shipping\ShippingData;
-use TautId\Shipping\Helpers\ImageHelper;
 use TautId\Shipping\Data\Shipping\ShippingInformationData;
 use TautId\Shipping\Abstracts\ShippingMethodDriverAbstract;
 use TautId\Shipping\Data\Shipping\AvailableShippingWithRateData;
@@ -163,6 +164,7 @@ class ApikurirDriver extends ShippingMethodDriverAbstract
                                                         'method_channel' => $record->driver_channel,
                                                         'method_service' => $record->driver_service,
                                                         'shipping_cost' => (float)data_get($item,'price',0),
+                                                        'insurance_cost' => (float)data_get($item,'insurancePrice',0),
                                                         'estimation' => $estimation
                                                     ])
                                                 );
@@ -222,7 +224,7 @@ class ApikurirDriver extends ShippingMethodDriverAbstract
     public function createShipping(ShippingData $data): void
     {
         $payload = [
-            'isPickup' => true,
+            'isPickup' => ($data->type == ShippingTypeEnum::Pickup->value),
             'isCod' => $data->is_cod,
             'dimensions' => [
                 $data->dimension->width,
@@ -269,8 +271,8 @@ class ApikurirDriver extends ShippingMethodDriverAbstract
         $payload = [
             'referenceNumber' => $data->trx_id,
             'isUseInsurance' => false,
-            'isPickup' => true,
-            'pickupTime' => now()->toISOString(),
+            'isPickup' => ($data->type == ShippingTypeEnum::Pickup->value),
+            'pickupTime' => ($data->pickup_time) ? $data->pickup_time->toISOString() : now()->toISOString(),
             'isCod' => $data->is_cod,
             'shippingNote' => $data->note,
             'rateCode' => 'UDRREG',
@@ -306,7 +308,7 @@ class ApikurirDriver extends ShippingMethodDriverAbstract
                 'qty' => 1,
                 'packagePrice' => $data->package_price,
                 'description' => null,
-                'dimenstions' => [
+                'dimensions' => [
                     $data->dimension->width,
                     $data->dimension->height,
                     $data->dimension->length
@@ -336,6 +338,7 @@ class ApikurirDriver extends ShippingMethodDriverAbstract
         ShippingService::make($data->id)
                         ->setAwb($response->json('data.awbNumber'))
                         ->setShippingCost($response->json('data.shipmentPrice'))
+                        ->setInsuranceCost($response->json('data.insurancePrice'))
                         ->setDriverOrderId($response->json('data.shipmentOrderNumber'))
                         ->setStatus(ShippingStatusEnum::Delivering->value)
                         ->updateDataWithRequestedShippingDriver();
