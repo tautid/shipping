@@ -17,7 +17,7 @@ use TautId\Shipping\Data\Utility\FilterPaginationData;
 use TautId\Shipping\Data\Shipping\ShippingInformationData;
 use TautId\Shipping\Factories\ShippingMethodDriverFactory;
 use TautId\Shipping\Data\Shipping\AvailableShippingWithRateData;
-use TautId\Shipping\Data\Shipping\UpdateShippingDataShippingData;
+use TautId\Shipping\Data\Shipping\UpdateShippingData;
 
 class ShippingService
 {
@@ -167,7 +167,7 @@ class ShippingService
         return ShippingData::from($record);
     }
 
-    public function updateShipping(UpdateShippingDataShippingData $data): ShippingData
+    public function updateShipping(UpdateShippingData $data): ShippingData
     {
         $record = Shipping::find($data->id);
 

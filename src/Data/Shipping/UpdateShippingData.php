@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Spatie\LaravelData\Data;
 use Illuminate\Database\Eloquent\Model;
 
-class UpdateShippingDataShippingData extends Data
+class UpdateShippingData extends Data
 {
     public function __construct(
         public string $id,
