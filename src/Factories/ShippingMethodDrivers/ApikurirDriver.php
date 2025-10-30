@@ -275,7 +275,7 @@ class ApikurirDriver extends ShippingMethodDriverAbstract
             'pickupTime' => ($data->pickup_time) ? $data->pickup_time->toISOString() : now()->toISOString(),
             'isCod' => $data->is_cod,
             'shippingNote' => $data->note,
-            'rateCode' => 'UDRREG',
+            'rateCode' => $rate_code,
             'origin' => [
                 'contactName' => $data->origin->name,
                 'phone' => $data->origin->phone ?? '',
