@@ -12,6 +12,7 @@ class AvailableShippingWithRateData extends Data
         public string $method_driver,
         public ?string $method_channel,
         public ?string $method_service,
+        public ?string $method_image_url,
         public float $shipping_cost,
         public ?float $insurance_cost = 0,
         public ?string $estimation

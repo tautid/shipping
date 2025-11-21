@@ -163,6 +163,7 @@ class ApikurirDriver extends ShippingMethodDriverAbstract
                                                         'method_driver' => $record->driver,
                                                         'method_channel' => $record->driver_channel,
                                                         'method_service' => $record->driver_service,
+                                                        'method_image_url' => $this->channelImageUrl($record->driver_channel),
                                                         'shipping_cost' => (float)data_get($item,'price',0),
                                                         'insurance_cost' => (float)data_get($item,'insurancePrice',0),
                                                         'estimation' => $estimation
@@ -206,6 +207,7 @@ class ApikurirDriver extends ShippingMethodDriverAbstract
                                                         'method_driver' => $record->driver,
                                                         'method_channel' => $record->driver_channel,
                                                         'method_service' => $record->driver_service,
+                                                        'method_image_url' => $this->channelImageUrl($record->driver_channel),
                                                         'shipping_cost' => (float)(data_get($item,'price',0) + data_get($item,'codFee',0)),
                                                         'estimation' => $estimation
                                                     ])
