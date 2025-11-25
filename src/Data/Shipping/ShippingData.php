@@ -104,7 +104,7 @@ class ShippingData extends Data
             activities: new DataCollection(
                                 ShippingActivityData::class,
                                 !empty($record->activities)
-                                ? $record->activities->map(fn($activity) => ShippingActivityData::from($activity))
+                                ? $record->activities->sortByDesc('date')->map(fn($activity) => ShippingActivityData::from($activity))
                                 : []
                         ),
             date: $record->date,
