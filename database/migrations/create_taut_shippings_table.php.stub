@@ -89,10 +89,24 @@ return new class extends Migration
 
             $table->foreign('method_id')->references('id')->on('taut_shipping_methods');
         });
+
+        Schema::create('taut_shipping_activities', function (Blueprint $table) {
+            $table->id();
+
+            $table->unsignedBigInteger('shipping_id');
+            $table->string('hash');
+            $table->longText('description');
+            $table->timestamp('date');
+
+            $table->timestamps();
+
+            $table->foreign('shipping_id')->references('id')->on('taut_shippings')->cascadeOnDelete();
+        });
     }
 
     public function down()
     {
+        Schema::dropIfExists('taut_shipping_activities');
         Schema::dropIfExists('taut_shippings');
         Schema::dropIfExists('taut_shipping_methods');
     }

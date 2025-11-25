@@ -2,6 +2,8 @@
 
 namespace TautId\Shipping\Factories\ShippingMethodDrivers;
 
+use Carbon\Carbon;
+use Webpatser\Uuid\Uuid;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\DataCollection;
@@ -11,9 +13,11 @@ use TautId\Shipping\Enums\ShippingTypeEnum;
 use TautId\Shipping\Enums\ShippingStatusEnum;
 use TautId\Shipping\Services\ShippingService;
 use TautId\Shipping\Data\Shipping\ShippingData;
+use TautId\Shipping\Services\ShippingActivityService;
 use TautId\Shipping\Data\Shipping\ShippingInformationData;
 use TautId\Shipping\Abstracts\ShippingMethodDriverAbstract;
 use TautId\Shipping\Data\Shipping\AvailableShippingWithRateData;
+use TautId\Shipping\Data\ShippingActivity\CreateShippingActivityData;
 
 class ApikurirDriver extends ShippingMethodDriverAbstract
 {
@@ -379,6 +383,24 @@ class ApikurirDriver extends ShippingMethodDriverAbstract
         $awb = data_get($data,'awbNumber');
         $status = data_get($data,'trackingCode');
         $shipping = app(ShippingService::class)->getShippingByAwb($awb);
+
+        $histories = data_get($data,'trackingHistory',[]);
+        $history  = end($histories);
+        $description = data_get($history,"description");
+        $date = data_get($history,'date');
+        $hash = "apikurir{$description}{$date}";
+
+        $date = Carbon::parse($date);
+        $hash = (string)Uuid::generate(5, $hash, Uuid::NS_DNS);
+
+        app(ShippingActivityService::class)->createActivity(
+            data: CreateShippingActivityData::from([
+                'shipping_id' => $shipping->id,
+                'hash' => $hash,
+                'description' => $description,
+                'date' => $date
+            ])
+        );
 
         $status = $this->mappingStatus($status);
 

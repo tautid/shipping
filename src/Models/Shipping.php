@@ -2,13 +2,14 @@
 
 namespace TautId\Shipping\Models;
 
+use TautId\Shipping\Transitions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use TautId\Shipping\Enums\ShippingStatusEnum;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use TautId\Shipping\Traits\HasTransitionStatusTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use TautId\Shipping\Transitions;
 
 class Shipping extends Model
 {
@@ -49,5 +50,10 @@ class Shipping extends Model
     public function source(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(ShippingActivity::class,'method_id');
     }
 }
