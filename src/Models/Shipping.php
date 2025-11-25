@@ -54,6 +54,6 @@ class Shipping extends Model
 
     public function activities(): HasMany
     {
-        return $this->hasMany(ShippingActivity::class,'method_id');
+        return $this->hasMany(ShippingActivity::class,'shipping_id');
     }
 }

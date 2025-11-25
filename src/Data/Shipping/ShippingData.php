@@ -101,11 +101,12 @@ class ShippingData extends Data
                 'height' => data_get($record->dimension,'height'),
                 'length' => data_get($record->dimension,'length')
             ]),
-            activities: (!empty($record->activities))
-                            ? new DataCollection(
+            activities: new DataCollection(
                                 ShippingActivityData::class,
-                                $record->activities->map(fn($activity) => ShippingActivityData::from($activity)))
-                            : [],
+                                !empty($record->activities)
+                                ? $record->activities->map(fn($activity) => ShippingActivityData::from($activity))
+                                : []
+                        ),
             date: $record->date,
             pickup_time: $record->pickup_time,
             delivered_at: $record->delivered_at,
