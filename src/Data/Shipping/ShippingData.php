@@ -5,7 +5,10 @@ namespace TautId\Shipping\Data\Shipping;
 use Carbon\Carbon;
 use Spatie\LaravelData\Data;
 use TautId\Shipping\Models\Shipping;
+use Spatie\LaravelData\DataCollection;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
+use TautId\Shipping\Data\ShippingActivity\ShippingActivityData;
 
 class ShippingData extends Data
 {
@@ -30,6 +33,8 @@ class ShippingData extends Data
         public ShippingContactInformationData $origin,
         public ShippingContactInformationData $destination,
         public PackageDimensionData $dimension,
+        #[DataCollectionOf(ShippingActivityData::class)]
+        public ?DataCollection $activities,
         public Carbon $date,
         public ?Carbon $pickup_time,
         public ?Carbon $delivered_at,
@@ -96,6 +101,11 @@ class ShippingData extends Data
                 'height' => data_get($record->dimension,'height'),
                 'length' => data_get($record->dimension,'length')
             ]),
+            activities: (!empty($record->activities))
+                            ? new DataCollection(
+                                ShippingActivityData::class,
+                                $record->activities->map(fn($activity) => ShippingActivityData::from($activity)))
+                            : [],
             date: $record->date,
             pickup_time: $record->pickup_time,
             delivered_at: $record->delivered_at,
