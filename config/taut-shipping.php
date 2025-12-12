@@ -52,4 +52,6 @@ return [
     'apikurir_username' => null,
     'apikurir_password' => null,
     'apikurir_webhook_secret' => null,
+
+    'apikurir_callback_endpoint' => 'apikurir/taut-callback'
 ];
