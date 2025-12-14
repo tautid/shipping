@@ -5,6 +5,7 @@ namespace TautId\Shipping\Factories\ShippingMethodDrivers;
 use Carbon\Carbon;
 use Webpatser\Uuid\Uuid;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Spatie\LaravelData\DataCollection;
 use TautId\Shipping\Helpers\ImageHelper;
@@ -339,7 +340,14 @@ class ApikurirDriver extends ShippingMethodDriverAbstract
         app(ShippingService::class)->updateShippingResponse($data->id, $response->collect()->toArray());
 
         if(!$response->successful())
+        {
+            Log::error('Apikurir failed fetch create shipping :: ' , [
+                'payload' => $payload,
+                'response' => $response->collect()->toArray()
+            ]);
+
             throw new \Exception($response->json('message'));
+        }
 
         ShippingService::make($data->id)
                         ->setAwb($response->json('data.awbNumber'))
